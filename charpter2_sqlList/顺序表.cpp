@@ -5,49 +5,111 @@
 # define OverFlow -100
 # define Maxsize 1000
 
-//Ë³Ğò±íµÄÎå´ó»ù±¾²Ù×÷(Ì×Â·)
+
+
+//é¡ºåºè¡¨çš„äº”å¤§åŸºæœ¬æ“ä½œ(å¥—è·¯)
 typedef int Status;
 typedef  struct 
 {
 	int ID;
 }Element;
+
 typedef struct 
 {
-	Element * e;//Ò»Î¬Êı×éÖ¸Õë
-	int length ;//³¤¶È
+	Element * e;//ä¸€ç»´æ•°ç»„æŒ‡é’ˆ
+	int length ;//é•¿åº¦
 }SqlList;
 
 /*
-	1.³õÊ¼»¯
-	2.È¡Öµ
-	3.²éÕÒ
-	4.²åÈë
-	5.É¾³ı
+	1.åˆå§‹åŒ–
+	2.å–å€¼
+	3.æŸ¥æ‰¾
+	4.æ’å…¥
+	5.åˆ é™¤
 */
 
 Status  InitSqlList(SqlList &L);
-Status  GetElement(SqlList &L,int i,Element &e);
+Status  GetElement(SqlList L,int i,Element &e);
 Status  Commpet(Element a,Element b);
-
+int LocateElement(SqlList L,Element e);
+Status InsertElement(SqlList &L ,int i,Element e);
+Status DeleteElement(SqlList &L,int i);
+void ShowAll(SqlList L);
 
 int main ()
 {
 	SqlList s;
-	Status sta=InitSqlList(s);
+	Status sta=InitSqlList(s);//1.åˆå§‹åŒ–
+	
 	if(sta!=OK)
-		printf("³õÊ¼»¯Ê§°Ü!\n");
+		printf("åˆå§‹åŒ–å¤±è´¥!\n");
 	else 
-		printf("³õÊ¼»¯³É¹¦!\n");
-	printf("%d\n",s.e[0].ID);
-	return 0;
+		printf("åˆå§‹åŒ–æˆåŠŸ!\n");
+	
+	for(int i=0;i<10;i++)
+	{
+		Element e={};
+		e.ID=i;
+		sta =InsertElement(s,i+1,e);
+		if(sta==OK)
+			printf("ç¬¬%dä¸ªæ’å…¥æˆåŠŸ!\n",i+1);
+		else
+			printf("ç¬¬%dä¸ªæ’å…¥å¤±è´¥!\n",i+1);
+	}
+	ShowAll(s);
+	
+	Element get_e={};
+	
+	sta=GetElement(s,9,get_e);//2.å–å€¼
+	if(sta==OK) 
+			printf("å–å€¼æˆåŠŸ! ID: %d \n",get_e.ID);
+	else 
+		printf("å–å€¼å¤±è´¥!\n");
+	
+	int get_index = LocateElement(s,get_e);//3.æŸ¥æ‰¾	
+	printf("å®šä½ç´¢å¼•:%d \n",get_index);
+	
+	sta = InsertElement(s,get_index,get_e); //4.æ’å…¥
+	if(sta==OK) 
+			printf("æ’å…¥æˆåŠŸ!\n");
+	else 
+			printf("æ’å…¥å¤±è´¥!\n");
+	ShowAll(s);
+	
+	sta= DeleteElement(s,get_index);//5.åˆ é™¤	
+	if(sta==OK) 
+			printf("åˆ é™¤æˆåŠŸ!\n");
+	else 
+			printf("åˆ é™¤å¤±è´¥!\n");
+	ShowAll(s);
+	
+		return 0;
 }
-Status  InitSqlList(SqlList &L)//1£¬³õÊ¼»¯
+
+Status  InitSqlList(SqlList &L)//1ï¼Œåˆå§‹åŒ–
 {
-	//±¾ÖÊÉÏÊÇ½«Ë³Ğò±íµÄÊı×éÖ¸Õë³õÊ¼»¯,ÇÒ½«³¤¶ÈÉèÖÃÎª0.Íê³É³õÊ¼»¯
-	L.e=new Element;
+	//æœ¬è´¨ä¸Šæ˜¯å°†é¡ºåºè¡¨çš„æ•°ç»„æŒ‡é’ˆåˆå§‹åŒ–é•¿åº¦é™å®šä¸ºMax,ä¸”å°†é•¿åº¦è®¾ç½®ä¸º0.å®Œæˆåˆå§‹åŒ–
+	L.e=new Element[Maxsize];
 	if(!L.e) return ERRO;
 	L.length=0;
 	return OK;
+}
+
+Status  GetElement(SqlList L,int i,Element &e)//2.å–å€¼
+{
+	if((i>L.length)||(i<1)) return OverFlow;
+	e=L.e[i-1];
+	return OK;
+}
+
+int LocateElement(SqlList L,Element e) //3.æŸ¥æ‰¾
+{
+	for(int i=0;i<L.length;i++)
+	{
+		if(Commpet(e,L.e[i])==OK) 
+			return i+1;		
+	}
+	return 0;
 }
 
 Status  Commpet(Element a,Element b)
@@ -55,10 +117,36 @@ Status  Commpet(Element a,Element b)
 	if(a.ID==b.ID) return OK;
 	return ERRO;
 }
-Status  GetElement(SqlList &L,int i,Element &e)//2.È¡Öµ
+
+Status InsertElement(SqlList &L ,int i,Element e)//4.æ’å…¥æ•°æ®
 {
-	if((i>L.length)||(i<1)) return OverFlow;
-	e=L.e[i-1];
+	if((i<1)||(i>L.length+1)) return OverFlow;
+	if(L.length>=Maxsize) return OverFlow;//æ£€æŸ¥å­˜å‚¨ç©ºé—´æ˜¯å¦å·²æ»¡
+	for(int j=L.length-1;j>=(i-1);j--)
+	{
+		L.e[j+1]=L.e[j];
+	}
+	L.e[i-1]=e;
+	L.length++;//é€šè¿‡ä¹‹å‰çš„æ£€æµ‹å·²æ»¡é˜²æ­¢å†…å­˜æº¢å‡º
 	return OK;
 }
 
+Status DeleteElement(SqlList &L,int i) //5.åˆ é™¤æ•°æ®
+{
+	if((i<1)||(i>L.length)) return OverFlow;
+	for(int j=i;j<=L.length-1;j++)
+	{
+		L.e[j-1]=L.e[j];
+	}
+	L.length--;
+	return OK;
+}
+
+void ShowAll(SqlList L)
+{
+	for(int i=0;i<L.length;i++)
+	{
+		printf("ID: %d\t",L.e[i].ID);
+	}
+	putchar('\n');
+}
