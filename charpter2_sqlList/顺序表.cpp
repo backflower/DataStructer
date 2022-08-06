@@ -7,7 +7,15 @@
 
 
 
-//顺序表的五大基本操作(套路)
+/*
+顺序表的五大基本操作(套路)
+	1.初始化
+	2.取值
+	3.查找
+	4.插入
+	5.删除
+*/
+
 typedef int Status;
 typedef  struct 
 {
@@ -20,20 +28,12 @@ typedef struct
 	int length ;//长度
 }SqlList;
 
-/*
-	1.初始化
-	2.取值
-	3.查找
-	4.插入
-	5.删除
-*/
-
-Status  InitSqlList(SqlList &L);
-Status  GetElement(SqlList L,int i,Element &e);
+Status  InitSqlList(SqlList &L);//	1.初始化
+Status  GetElement(SqlList L,int i,Element &e);//2.取值
 Status  Commpet(Element a,Element b);
-int LocateElement(SqlList L,Element e);
-Status InsertElement(SqlList &L ,int i,Element e);
-Status DeleteElement(SqlList &L,int i);
+int LocateElement(SqlList L,Element e);//3.查找
+Status InsertElement(SqlList &L ,int i,Element e);//	4.插入
+Status DeleteElement(SqlList &L,int i);//	5.删除
 void ShowAll(SqlList L);
 
 int main ()
