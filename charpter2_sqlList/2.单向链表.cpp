@@ -1,191 +1,195 @@
 # include <stdio.h>
-# include <string.h>
-# include <iostream>
-# define  OK 100
-# define ERRO -100
-using namespace std;
+# define  ERROR -100
+# define OK 1 
+# define OverFlow -10
+typedef int Status;
+/*
+	å•é“¾è¡¨çš„å…­å¤§åŸºç¡€æ“ä½œ(å¥—è·¯):
+	1.åˆå§‹åŒ–
+		Status initNode(LinkList & L);
+	2.å–å…ƒç´ å€¼
+		Status getElement(LinkList L,int i,Elemenet &e);
+	3.æŸ¥æ‰¾å›ºå®šçš„èŠ‚ç‚¹
+		Node *  LocateElement(LinkList L,Element e)
+	4.æ’å…¥å…ƒç´ 
+		Status insertElement(LinkList &L,int i,Element e);
+	5.åˆ é™¤å…ƒç´ 
+		Status DeleteElement(LinkList &L,int i);
+	6.åˆ›å»ºå®šé•¿å•é“¾è¡¨
+		Status CreateNode (LinkList  &L,int length);//åŸå‹
+        Status CreateNodeByInfort (LinkList  &L,int length);//å‰æ’æ³•
+        Status CreateNodeByEnd (LinkList  &L,int length);//åæ’æ³•
+*/
 
 
-typedef int STATUS;
-
-//ÉùÃ÷Êı¾İÓò
 typedef struct Element 
-{
+{	
 	int ID;
-	char name[50];
-}Element ;
+} Element;
 
-typedef struct Node
-{
-	Element *element;//Êı¾İÓò
-	Node * next;//Ö¸ÕëÓòÏÂÒ»¸öÖ¸Õë
-} Node , *LinkList;
+typedef struct LNode
+{	
+	Element e;//æ•°æ®åŸŸ
+	LNode * next;//æŒ‡é’ˆåŸŸæŒ‡å‘ä¸‹ä¸€ä¸ªå…ƒç´ 
+} LNode,* LinkList ;//LinkList ä¸ºæŒ‡å‘Nodeç±»å‹èŠ‚ç‚¹çš„æŒ‡é’ˆ
 
-STATUS initNode(LinkList &L);//³õÊ¼»¯µ¥Ïò
+Status initNode(LinkList &L);
 
-STATUS GetLinkList(LinkList L,int j ,Element & e);//»ñÈ¡Ö¸¶¨Ë÷ÒıµÄÖµ
+Status getElement(LinkList L,int i,Element &e);
 
-Node * LocateLinkList(LinkList L,Element e);//¶¨Î»°üº¬ÔªËØeµÄ½ÚµãNode 
+LNode *  LocateElement(LinkList L,Element e);
 
-bool CompareElement(Element e1,Element e2);//±È½ÏÁ½¸öÔªËØÏàµÈ
+Status  Commpet(Element a,Element b);
 
-STATUS InsertElement (Element e,LinkList &L,int i);//ÔÚµÚj¸öÎ»ÖÃ²åÈëÔªËØe
+Status CreateNodeByInfort (LinkList  &L,int length);//å‰æ’æ³•åˆ›å»ºé“¾è¡¨
 
-void showElement(LinkList L);//´òÓ¡Á´±íµÄËùÓĞ½Úµã
+Status CreateNodeByEnd (LinkList  &L,int length);//åæ’æ³•åˆ›å»ºé“¾è¡¨
 
-STATUS CreateLinkList_fromt(LinkList &L,int n);//Ç°²å·¨´´½¨Á´±í
-
-STATUS CreateLinkList_last(LinkList &L,int n);//ºó²å·¨´´½¨Á´±í
-
-STATUS DeleteElement(LinkList &L,int i);//É¾³ıÖ¸¶¨Î»ÖÃµÄÔªËØ
-	
+void ShowLinkedList (LinkList &L,int length);
 
 int main ()
 {
 	LinkList L;
-	STATUS status=initNode(L);
-	if(status==OK) {
-		printf("³õÊ¼»¯³É¹¦!\nÔªËØ->ID:%d \t ÔªËØ->ID:%s",L->element->ID,L->element->name);
-	}
+	Status sta =initNode(L);
+	if(sta==OK)
+		printf("å•é“¾è¡¨åˆå§‹åŒ–æˆåŠŸ!\n");
+    // sta = CreateNodeByInfort(L,10);
+    // if(sta = OK )
+    //     ShowLinkedList(L,10);
+	sta = CreateNodeByEnd(L,10);
+    if(sta = OK )
+        ShowLinkedList(L,10);
 	return 0;
 }
 
-
-STATUS initNode (LinkList &L)//³õÊ¼»¯µ¥ÏòÁ´±í
+Status initNode(LinkList &L)//å¤´èŠ‚ç‚¹åˆå§‹åŒ–,æ— ä¸­ç”Ÿæœ‰
 {
-	L = new  Node;
-//	L->element=new Element;
-//	L->element->ID=0;
-//	memset(L->element->name,'\0',50);
-	L->next=NULL;
+
+	//æ„å»ºä¸€ä¸ªç©ºçš„å•é“¾è¡¨L
+	L=new LNode;//ä½¿ç”¨æ–°ç”Ÿæˆçš„èŠ‚ç‚¹ä½œä¸ºå¤´èŠ‚ç‚¹,å¤´æŒ‡é’ˆæŒ‡å‘æ–°ç”Ÿæˆçš„èŠ‚ç‚¹.
+	L->next=NULL;//å¤´èŠ‚ç‚¹æŒ‡é’ˆåŸŸæŒ‡å‘ä¸ºç©º
+	return OK;
+}
+
+Status getElement(LinkList L , int i,Element &e)
+{
+	LNode *p=L->next;
+	int count =1;
+	while(p&&(count<i))
+	{
+		p=p->next;
+		count++;
+	}
+	if((!p)||(count>i)){//é˜²æ­¢iå°äº0æˆ–è€…i>o åœ¨[1,i]ä¹‹é—´å‡ºç°ç©ºèŠ‚ç‚¹çš„æƒ…å†µ
+		printf("æœªèƒ½å®šä½åˆ°è¯¥å…ƒç´ ,å¤±è´¥! \n");
+		return ERROR;
+	}
+	e=p->e;
 	return OK;
 }
 
 
-STATUS GetLinkList(LinkList L,int j ,Element &e)//»ñÈ¡Ö¸¶¨Ë÷ÒıµÄÖµ
+LNode *  LocateElement(LinkList L,Element e)
 {
-	Node * p;
+	LNode *p;
 	p=L->next;
-	int i=1;
-	while(p&&(i<j))
+
+	while(p&&(Commpet(p->e,e)==ERROR))
 	{
 		p=p->next;
-		i++;
 	}
-	if((i>j)||!p) return ERRO;
-	e = * p->element;
-	return OK;
+	return p;//æ²¡æœ‰æ‰¾åˆ°å°±ä¼šè¿”å›NULL,æ‰¾åˆ°å°±ä¼šè¿”å›è¦çš„Node.
 }
 
-Node * LocateLinkList(LinkList L,Element e)//¶¨Î»°üº¬ÔªËØeµÄ½ÚµãNode 
+Status  Commpet(Element a,Element b)
 {
-		Node * p;
-		p=L->next;
-		while(p&&(CompareElement(*p->element,e)))
-		{
-			p=p->next;
-		}
-		return p;
+	if(a.ID==b.ID) return OK;
+	return ERROR;
+}
+
+Status insertElement(LinkList &L,int i,Element e)
+{ 
+	LNode *p=L;//æ³¨æ„æ­¤å¤„ä¸ºL å¤´èŠ‚ç‚¹ ä¸æ˜¯é¦–å…ƒèŠ‚ç‚¹,è¯¦ç»†è§åé¢p=Lä¸p=L->nextçš„åŒºåˆ†
+	int count =0;//æ³¨æ„æ­¤å¤„çš„count å‚æ•°ä¸º0
 		
-}
-
-bool CompareElement(Element e1,Element e2)
-{
-			if(((e1.ID==e2.ID))&&(strcmp(e1.name,e2.name)))	return true;
-			return false;
-}
-
-STATUS InsertElement (Element e,LinkList &L,int i)//ÔÚµÚj¸öÎ»ÖÃ²åÈëÔªËØe
-{
-	//1.ÕÒµ½µÚi-1¸öÔªËØ
-	//2.ĞÂ½¨Ò»¸öÔªËØS
-	//SµÄÖµÓòÉèÖÃÎªÔªËØe
-	//3.½«SÖ¸ÕëÓòÖ¸Ïòi¸öÔªËØ
-	//4.½«µÚi-1¸öÖ¸ÕëÓòÖ¸ÏòS
-	Node *p;
-	p=L;
-	int j=0;
-	while(p&&(j<i-1))
+	//å–å¾—i-1ä¸ª  ç»“ç‚¹ä½ç½®çš„å€¼
+	while(p&&(count<(i-1)))
 	{
 		p=p->next;
-		j++;
+		count++;
 	}
-	if((!p)||(j>(i-1))) return ERRO;
-	Node * s=new Node;
-	* s->element=e;
+	if((!p)||(count>(i-1))) return ERROR;//è¶…è¿‡äº†i-1çš„é•¿åº¦æˆ–è€…i-1å°äº0
+	LNode *s=new LNode;//è¦æ’å…¥çš„ç»“ç‚¹s
+	s->e=e;
 	s->next=p->next;
 	p->next=s;
 	return OK;
 }
 
 
-void showElement(LinkList L)
+Status DeleteElement(LinkList &L,int i)
 {
-	Node * p ;
-	p=L->next;
-	while(p)
+	LNode *p=L;//æ³¨æ„æ­¤å¤„ä¸ºL å¤´èŠ‚ç‚¹ ä¸æ˜¯é¦–å…ƒèŠ‚ç‚¹,è¯¦ç»†è§åé¢p=Lä¸p=L->nextçš„åŒºåˆ†
+	int count =0;//æ³¨æ„æ­¤å¤„çš„count å‚æ•°ä¸º0
+	
+	while((p->next)&&(count<(i-1)))//æŸ¥æ‰¾åˆ°ç¬¬iä¸ªç»“ç‚¹
 	{
-		cout<<"ID:"<<p->element->ID<<" Name:"<<p->element->name<<"\t";	
 		p=p->next;
+		count++;
 	}
-	cout<<"\n";
-}
-
-
-STATUS CreateLinkList_fromt(LinkList &L,int n)//Ç°²å·¨
-{
-	L->next=NULL;
-	Node *p ;
-	p=L;
-	for(int i=0;i<n;i++)
-	{
-		Node *s=new Node;
-		s->element=new Element ;
-		s->element->ID=(i+1);
-		cout<<"ÊäÈëµÚ"<<(i+1)<<"¸öÔªËØµÄÖµ:";
-		cin>>s->element->name;
-		s->next=p->next;
-		p->next=s;				
-	}
+	
+	if((!p->next)||(count>(i-1))) return ERROR;
+	
+	LNode * s= p->next;
+	p->next=s->next;
+	delete s;//é‡Šæ”¾ç¬¬iä¸ªç»“ç‚¹çš„å†…å­˜
+	
 	return OK;
 }
 
-STATUS CreateLinkList_last(LinkList &L,int n)//ºó²å·¨
+Status CreateNodeByInfort (LinkList  &L,int length)//å‰æ’æ³•
 {
-	L->next=NULL;
-	Node *p;
-	p=L;
-	for(int j=0;j<n;j++)
+    LNode * p =L; 
+    for(int i=0;i<length;i++)
+    {
+        Element e = * new  Element;
+        e.ID=i;
+        LNode * s = new LNode;//æ–°æ’å…¥çš„å…ƒç´ ä¸ºs
+ 
+        s->e=e;
+        s->next=p->next;
+        p->next=s;
+    }
+	printf("å‰æ’æ³•åˆ›å»º!\n");
+    return OK;
+}
+
+Status CreateNodeByEnd (LinkList  &L,int length)//åæ’æ³•
+{
+	
+	LNode * N=L;	
+	Element e = * new  Element;	
+	for(int i=0;i<length;i++)
 	{
-		Node *s =new Node;
-		s->element=new Element;
-		s->element->ID=(j+1);
-		cout<<"ÊäÈëµÚ"<<(j+1)<<"¸öÔªËØ Name :";
-		cin>>s->element->name;
+		e.ID=(i+1);
+		LNode * s= new LNode;
+		s->e=e;
+
 		s->next=NULL;
-		p->next=s;
-		p=s;
+		N->next=s;
+		N=s;
+
 	}
-	return OK;
+	printf("åæ’æ³•åˆ›å»º!\n");
+	return  OK;
 }
 
-STATUS   DeleteElement(LinkList &L,int i)//É¾³ıÖ¸¶¨Î»ÖÃµÄÔªËØ
+void ShowLinkedList (LinkList &L,int length)
 {
-
-	Node * p;
-	p=L;
-	int j=0;
-	while((p->next)&&(j<i-1))//¶¨Î»µ½µÚi-1¸öÔªËØ
-	{
-		p=p->next;
-		j++;	
-	}
-	if((!p->next)||(j>(i-1))) return ERRO;
-	
- 	Node *s =new Node;
-	s=p->next;//¶¨Î»µ½i¸öÔªËØ
-	p->next=s->next;//i-1µÄnext±ä³Éi+1
-	delete s;//É¾³ıµôµÚi¸öÔªËØ
-	
-	return OK;
+    LNode *p=L;
+    for(int i= 0 ;i<length;i++)
+    {
+        p=p->next;
+        printf("ç¬¬%dä¸ªå…ƒç´ ID:%d \n",i+1,p->e.ID);
+    }
 }
