@@ -54,10 +54,10 @@ int main ()
 	if(sta==OK)
 		printf("单链表初始化成功!\n");
     // sta = CreateNodeByInfort(L,10);
-    // if(sta = OK )
+    // if(sta == OK )
     //     ShowLinkedList(L,10);
 	sta = CreateNodeByEnd(L,10);
-    if(sta = OK )
+    if(sta == OK )
         ShowLinkedList(L,10);
 	return 0;
 }
